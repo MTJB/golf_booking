@@ -1,47 +1,34 @@
 from selenium import webdriver
-# from competition_util import go_to_competition
 
 
 class GolfBooking:
-    def __init__(self, username, password, competitionDate):
-        self.browser = webdriver.Chrome('/usr/local/bin/chromedriver')
-        self.username = username
-        self.password = password
-        self.competitionDate = competitionDate
+    def __init__(self):
+        pass
 
-        # Go to website
-        self.browser.get('https://www.brsgolf.com/castlerock/members_home.php')
+    browser = webdriver.Chrome('/usr/local/bin/chromedriver')
 
-        # Go to log in screen
-        book_time_button = self.browser.find_element_by_class_name('book_a_tee_time_button')
-        book_time_button.click()
+    # Go to website
+    browser.get('https://www.brsgolf.com/castlerock/members_home.php')
 
-        # Perform login
-        user_name_input = self.browser.find_element_by_name('_username')
-        password_input = self.browser.find_element_by_name('_password')
-        user_name_input.send_keys(self.username)
-        password_input.send_keys(self.password)
-        login_button = self.browser.find_element_by_name("SUBMIT")
-        login_button.click()
+    # Go to log in screen
+    book_time_button = browser.find_element_by_class_name('book_a_tee_time_button')
+    book_time_button.click()
 
-        # # Navigate to today's competition booking
-        link_to_comp = None
-        competitions = self.browser.find_elements_by_class_name('competition_booking_summary_table')
-        for comp in competitions:
-            if competitionDate in comp.text.encode('ascii', 'ignore'):
-                link_to_comp = comp
-                break
+    # Perform login
+    user_name_input = browser.find_element_by_name('_username')
+    password_input = browser.find_element_by_name('_password')
+    user_name_input.send_keys(raw_input("Username: "))
+    password_input.send_keys(raw_input("Password: "))
+    login_button = browser.find_element_by_name("SUBMIT")
+    login_button.click()
 
-        link_to_comp.click()
+    # Ask user which competition they would like to navigate to
+    competitionList = browser.find_elements_by_class_name('competition_booking_summary_table')
+    competitionDict = {i+1: x for i, x in enumerate(competitionList)}
 
-        server_time = self.browser.find_element_by_id('servertime')
-        print (server_time)
+    print 'Competitions are: \n'
+    for k, v in competitionDict.iteritems():
+        print '[', k, ']\t', v.text.split(',')[0].split(' - ')[1], '-', v.text.split(',')[0].split(' - ')[2]
 
-
-
-
-
-
-
-
-
+    compIndex = raw_input('\n\nWhich competition would you like to book? ')
+    competitionDict.get(int(compIndex)).click()
